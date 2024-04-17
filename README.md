@@ -1,1 +1,3 @@
 # first_practical_activity_programacao_concorrente
+
+- uso do Runnable:  principal diferença entre Runnable e Thread é que Runnable é uma interface que define uma tarefa que pode ser executada por uma thread, enquanto Thread é uma classe que representa a própria thread. Usando a interface Runnable, você pode separar a lógica da tarefa que a thread executa da própria thread. Isso promove um design mais flexível e modular, onde você pode reutilizar a mesma lógica de tarefa com diferentes threads, se necessário.
