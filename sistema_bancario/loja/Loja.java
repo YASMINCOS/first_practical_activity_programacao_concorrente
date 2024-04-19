@@ -2,6 +2,7 @@ package sistema_bancario.loja;
 
 import sistema_bancario.banco.Banco;
 import sistema_bancario.banco.Conta;
+import sistema_bancario.pessoa.Funcionario;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -33,5 +34,19 @@ public class Loja {
         }
     }
 
+    public void pagarSalarios(Funcionario funcionario) {
+        lock.lock();
+        try {
+            if (conta.getSaldo() >= funcionario.getSalario()) {
+                conta.sacar(funcionario.getSalario());
+                funcionario.receberSalario(funcionario.getSalario());
+                System.out.println("A loja " + nome + " pagou o salário de R$" + funcionario.getSalario() + " ao funcionário " + funcionario.getNome());
+            } else {
+                System.out.println("A loja " + nome + " não possui saldo suficiente para pagar o salário do funcionário " + funcionario.getNome());
+            }
+        } finally {
+            lock.unlock(); 
+        }
+    }
    
 }

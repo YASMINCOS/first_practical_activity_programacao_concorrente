@@ -1,16 +1,18 @@
 package sistema_bancario.pessoa;
 
+import java.util.List;
 import java.util.Random;
 
 import sistema_bancario.banco.Conta;
 import sistema_bancario.loja.Loja;
-
 public class Cliente extends Pessoa implements Runnable {
     private Conta conta;
+    private List<Loja> lojas; // Lista de lojas disponíveis para o cliente
 
-    public Cliente(String nome, String endereco, String cpf, Conta conta) {
+    public Cliente(String nome, String endereco, String cpf, Conta conta, List<Loja> lojas) {
         super(nome, endereco, cpf);
         this.conta = conta;
+        this.lojas = lojas;
     }
 
     @Override
@@ -18,7 +20,7 @@ public class Cliente extends Pessoa implements Runnable {
         Random random = new Random();
         while (conta.getSaldo() > 0) {
             int valorCompra = random.nextInt(2) == 0 ? 100 : 200; 
-            Loja loja = random.nextInt(2) == 0 ? new Loja("Loja 1") : new Loja("Loja 2");
+            Loja loja = lojas.get(random.nextInt(lojas.size())); // Escolhe aleatoriamente uma loja da lista
             realizarCompra(loja, valorCompra);
         }
     }
@@ -34,4 +36,3 @@ public class Cliente extends Pessoa implements Runnable {
         }
     }
 }
-
