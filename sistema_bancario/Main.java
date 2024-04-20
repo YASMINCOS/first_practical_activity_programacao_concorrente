@@ -9,7 +9,6 @@ import sistema_bancario.pessoa.Funcionario;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Main {
     public static void main(String[] args) {
         Banco banco = new Banco("Nubank", 1000000000);
@@ -25,15 +24,19 @@ public class Main {
         Conta contaFuncionario1Loja2 = new Conta("Funcionario1Loja2", 0);
         Conta contaFuncionario2Loja2 = new Conta("Funcionario2Loja2", 0);
 
-        
+        Conta contaInvestimentoFuncionario1Loja1 = new Conta("InvestimentoFuncionario1Loja1", 0);
+        Conta contaInvestimentoFuncionario2Loja1 = new Conta("InvestimentoFuncionario2Loja1", 0);
+        Conta contaInvestimentoFuncionario1Loja2 = new Conta("InvestimentoFuncionario1Loja2", 0);
+        Conta contaInvestimentoFuncionario2Loja2 = new Conta("InvestimentoFuncionario2Loja2", 0);
+
         Funcionario funcionario1Loja1 = new Funcionario("Funcionario1Loja1", "Endereco1", "CPF1", 1400,
-                contaFuncionario1Loja1, null);
+                contaFuncionario1Loja1, contaInvestimentoFuncionario1Loja1);
         Funcionario funcionario2Loja1 = new Funcionario("Funcionario2Loja1", "Endereco2", "CPF2", 1400,
-                contaFuncionario2Loja1, null);
+                contaFuncionario2Loja1, contaInvestimentoFuncionario2Loja1);
         Funcionario funcionario1Loja2 = new Funcionario("Funcionario1Loja2", "Endereco3", "CPF3", 1400,
-                contaFuncionario1Loja2, null);
+                contaFuncionario1Loja2, contaInvestimentoFuncionario1Loja2);
         Funcionario funcionario2Loja2 = new Funcionario("Funcionario2Loja2", "Endereco4", "CPF4", 1400,
-                contaFuncionario2Loja2, null);
+                contaFuncionario2Loja2, contaInvestimentoFuncionario2Loja2);
 
         funcionariosLoja1.add(funcionario1Loja1);
         funcionariosLoja1.add(funcionario2Loja1);
@@ -79,5 +82,7 @@ public class Main {
 
         loja1.pagarSalarios();
         loja2.pagarSalarios();
+
+        
     }
 }

@@ -45,10 +45,16 @@ public class Loja {
                     double salario = funcionario.getSalario();
                     if (contaRecebimento.getSaldo() >= salario) {
                         contaRecebimento.sacar(salario);
-                        funcionario.receberSalario();
-                        System.out.println("A loja " + nome + " pagou o salário de R$" + salario + " ao funcionário " + funcionario.getName());
+                        Thread threadFuncionario = new Thread(funcionario);
+                        threadFuncionario.start();
+                        try {
+                            threadFuncionario.join(); 
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println("A loja " + nome + " pagou o salário de R$" + salario + " ao funcionário " + funcionario.getNome());
                     } else {
-                        System.out.println("A loja " + nome + " não possui saldo suficiente para pagar o salário do funcionário " + funcionario.getName());
+                        System.out.println("A loja " + nome + " não possui saldo suficiente para pagar o salário do funcionário " + funcionario.getNome());
                     }
                 }
             } else {
@@ -58,6 +64,7 @@ public class Loja {
             lock.unlock();
         }
     }
+    
 
     private double calcularTotalSalarios() {
         double total = 0;
