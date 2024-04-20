@@ -1,38 +1,49 @@
 package sistema_bancario.pessoa;
 
-import java.util.List;
-import java.util.Random;
-
 import sistema_bancario.banco.Conta;
 import sistema_bancario.loja.Loja;
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class Cliente extends Pessoa implements Runnable {
     private Conta conta;
-    private List<Loja> lojas; // Lista de lojas disponíveis para o cliente
+    private Loja loja1;
+    private Loja loja2;
 
-    public Cliente(String nome, String endereco, String cpf, Conta conta, List<Loja> lojas) {
+    public Cliente(String nome, String endereco, String cpf, Conta conta, Loja loja1, Loja loja2) {
         super(nome, endereco, cpf);
         this.conta = conta;
-        this.lojas = lojas;
+        this.loja1 = loja1;
+        this.loja2 = loja2;
     }
 
     @Override
     public void run() {
-        Random random = new Random();
-        while (conta.getSaldo() > 0) {
-            int valorCompra = random.nextInt(2) == 0 ? 100 : 200; 
-            Loja loja = lojas.get(random.nextInt(lojas.size())); // Escolhe aleatoriamente uma loja da lista
-            realizarCompra(loja, valorCompra);
-        }
+        realizarCompras();
     }
 
-    private void realizarCompra(Loja loja, double valor) {
-        synchronized (conta) {
-            if (conta.getSaldo() >= valor) {
-                conta.sacar(valor);
-                System.out.println(getNome() + " realizou uma compra de R$" + valor + " na " + loja.getName());
-            } else {
-                System.out.println(getNome() + " não possui saldo suficiente para realizar a compra de R$" + valor);
+    public void realizarCompras() {
+        while (true) {
+            int valorCompra = Math.random() < 0.5 ? 100 : 200;
+            Lock lock = new ReentrantLock();
+            lock.lock();
+            try {
+                if (conta.getSaldo() >= valorCompra) {
+                    conta.sacar(valorCompra);
+                    System.out.println(getNome() + " realizou uma compra de R$" + valorCompra);
+                    if (Math.random() < 0.5) {
+                        loja1.receberPagamento(valorCompra);
+                    } else {
+                        loja2.receberPagamento(valorCompra);
+                    }
+                } else {
+                    break;
+                }
+            } finally {
+                lock.unlock();
             }
         }
+        System.out.println(getNome() + " terminou suas compras. Saldo final: R$" + conta.getSaldo());
     }
 }

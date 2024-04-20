@@ -4,49 +4,66 @@ import sistema_bancario.banco.Banco;
 import sistema_bancario.banco.Conta;
 import sistema_bancario.pessoa.Funcionario;
 
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
 public class Loja {
     private String nome;
     private Banco banco;
-    private Conta conta;
+    private Conta contaRecebimento;
+    private List<Funcionario> funcionarios; 
     private Lock lock;
 
-    public Loja(String nome, Banco banco, Conta conta) {
+    public Loja(String nome, Banco banco, Conta contaRecebimento, List<Funcionario> funcionarios) {
         this.nome = nome;
         this.banco = banco;
-        this.conta = conta;
+        this.contaRecebimento = contaRecebimento;
+        this.funcionarios = funcionarios; 
         this.lock = new ReentrantLock();
     }
 
-    public String getName() {
+    public String getNome() {
         return nome;
     }
 
     public void receberPagamento(double valor) {
-        lock.lock(); 
+        lock.lock();
         try {
-            conta.depositar(valor);
+            contaRecebimento.depositar(valor);
             System.out.println("A loja " + nome + " recebeu um pagamento de R$" + valor);
         } finally {
             lock.unlock();
         }
     }
 
-    public void pagarSalarios(Funcionario funcionario) {
+    public void pagarSalarios() {
         lock.lock();
         try {
-            if (conta.getSaldo() >= funcionario.getSalario()) {
-                conta.sacar(funcionario.getSalario());
-                funcionario.receberSalario(funcionario.getSalario());
-                System.out.println("A loja " + nome + " pagou o salário de R$" + funcionario.getSalario() + " ao funcionário " + funcionario.getNome());
+            double totalSalarios = calcularTotalSalarios();
+            if (contaRecebimento.getSaldo() >= totalSalarios) {
+                for (Funcionario funcionario : funcionarios) {
+                    double salario = funcionario.getSalario();
+                    if (contaRecebimento.getSaldo() >= salario) {
+                        contaRecebimento.sacar(salario);
+                        funcionario.receberSalario();
+                        System.out.println("A loja " + nome + " pagou o salário de R$" + salario + " ao funcionário " + funcionario.getName());
+                    } else {
+                        System.out.println("A loja " + nome + " não possui saldo suficiente para pagar o salário do funcionário " + funcionario.getName());
+                    }
+                }
             } else {
-                System.out.println("A loja " + nome + " não possui saldo suficiente para pagar o salário do funcionário " + funcionario.getNome());
+                System.out.println("A loja " + nome + " não possui saldo suficiente para pagar os salários dos funcionários.");
             }
         } finally {
-            lock.unlock(); 
+            lock.unlock();
         }
     }
-   
+
+    private double calcularTotalSalarios() {
+        double total = 0;
+        for (Funcionario funcionario : funcionarios) {
+            total += funcionario.getSalario();
+        }
+        return total;
+    }
 }

@@ -5,67 +5,52 @@ import sistema_bancario.banco.Conta;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Funcionario extends Pessoa implements Runnable {
-    private String cargo;
+public class Funcionario extends Thread {
     private double salario;
     private Conta contaSalario;
     private Conta contaInvestimentos;
     private Lock lock;
 
-    public Funcionario(String nome, String endereco, String cpf, String cargo, double salario, Conta contaSalario, Conta contaInvestimentos) {
-        super(nome, endereco, cpf);
-        this.cargo = cargo;
+    public Funcionario(String nome, String endereco, String cpf, double salario, Conta contaSalario, Conta contaInvestimentos) {
+        super(nome);
         this.salario = salario;
         this.contaSalario = contaSalario;
         this.contaInvestimentos = contaInvestimentos;
         this.lock = new ReentrantLock();
     }
 
-    public String getCargo() {
-        return cargo;
+    @Override
+    public void run() {
+        realizarOperacoes();
     }
 
-    public void setCargo(String cargo) {
-        this.cargo = cargo;
+    private void realizarOperacoes() {
+        lock.lock();
+        try {
+            receberSalario();
+            investirSalario();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void receberSalario() {
+        contaSalario.depositar(salario);
+        System.out.println(getName() + " recebeu o salário de R$" + salario);
+    }
+
+    private void investirSalario() {
+        double valorInvestimento = salario * 0.2;
+        if (contaSalario.getSaldo() >= valorInvestimento) {
+            contaSalario.sacar(valorInvestimento);
+            contaInvestimentos.depositar(valorInvestimento);
+            System.out.println(getName() + " investiu R$" + valorInvestimento + " em conta de investimentos");
+        } else {
+            System.out.println(getName() + " não possui saldo suficiente para investir R$" + valorInvestimento);
+        }
     }
 
     public double getSalario() {
         return salario;
-    }
-
-    public void setSalario(double salario) {
-        this.salario = salario;
-    }
-
-    @Override
-    public void run() {
-        receberSalario(salario);
-        investirSalario();
-    }
-
-    public void receberSalario(double valor) {
-        lock.lock(); 
-        try {
-            contaSalario.depositar(valor);
-            System.out.println(getNome() + " recebeu o salário de R$" + valor);
-        } finally {
-            lock.unlock(); 
-        }
-    }
-
-    private void investirSalario() {
-        double valorInvestido = salario * 0.2;
-        lock.lock(); 
-        try {
-            if (contaSalario.getSaldo() >= valorInvestido) {
-                contaSalario.sacar(valorInvestido);
-                contaInvestimentos.depositar(valorInvestido);
-                System.out.println(getNome() + " investiu R$" + valorInvestido + " em conta de investimentos");
-            } else {
-                System.out.println(getNome() + " não possui saldo suficiente para investir R$" + valorInvestido);
-            }
-        } finally {
-            lock.unlock(); 
-        }
     }
 }
