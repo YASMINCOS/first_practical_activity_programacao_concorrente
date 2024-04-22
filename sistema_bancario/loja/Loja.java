@@ -48,12 +48,14 @@ public class Loja {
                 for (Funcionario funcionario : funcionarios) {
                     if (!funcionario.recebeuSalario()) {
                         double salario = funcionario.getSalario();
+                        Conta contaDestino = funcionario.getContaSalario();
                         if (saldoAtual >= salario) {
                             contaRecebimento.sacar(salario);
                             funcionario.receberSalario(salario);
                             System.out.println("### Pagamento de Salários ###");
                             System.out.println("A loja " + nome + " pagou o salário de R$" + salario + " ao funcionário(loja) " + funcionario.getNome());
                             funcionario.investirSalario();
+                            banco.transferir(contaRecebimento, contaDestino, salario);
                             saldoAtual -= salario; 
                             atualizarSaldo(saldoAtual); 
 
@@ -68,8 +70,6 @@ public class Loja {
             lock.unlock();
         }
     }
-
-    
 
     private void atualizarSaldo(double novoSaldo) {
         contaRecebimento.setSaldo(novoSaldo);
