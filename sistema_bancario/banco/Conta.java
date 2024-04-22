@@ -22,6 +22,10 @@ public class Conta {
         return saldo;
     }
 
+    public void setSaldo(double novoSaldo) {
+        this.saldo = novoSaldo;
+    }    
+
     public void depositar(double valor) {
         saldo += valor;
     }

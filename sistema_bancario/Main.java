@@ -30,13 +30,13 @@ public class Main {
         Conta contaInvestimentoFuncionario2Loja2 = new Conta("InvestimentoFuncionario2Loja2", 0);
 
         Funcionario funcionario1Loja1 = new Funcionario("Funcionario1Loja1", "Endereco1", "CPF1", 1400,
-                contaFuncionario1Loja1, contaInvestimentoFuncionario1Loja1);
+                contaFuncionario1Loja1, contaInvestimentoFuncionario1Loja1, contaLoja1);
         Funcionario funcionario2Loja1 = new Funcionario("Funcionario2Loja1", "Endereco2", "CPF2", 1400,
-                contaFuncionario2Loja1, contaInvestimentoFuncionario2Loja1);
+                contaFuncionario2Loja1, contaInvestimentoFuncionario2Loja1, contaLoja2);
         Funcionario funcionario1Loja2 = new Funcionario("Funcionario1Loja2", "Endereco3", "CPF3", 1400,
-                contaFuncionario1Loja2, contaInvestimentoFuncionario1Loja2);
+                contaFuncionario1Loja2, contaInvestimentoFuncionario1Loja2, contaLoja1);
         Funcionario funcionario2Loja2 = new Funcionario("Funcionario2Loja2", "Endereco4", "CPF4", 1400,
-                contaFuncionario2Loja2, contaInvestimentoFuncionario2Loja2);
+                contaFuncionario2Loja2, contaInvestimentoFuncionario2Loja2, contaLoja2);
 
         funcionariosLoja1.add(funcionario1Loja1);
         funcionariosLoja1.add(funcionario2Loja1);
@@ -70,6 +70,11 @@ public class Main {
         threadCliente4.start();
         threadCliente5.start();
 
+        Thread threadFuncionario1Loja1 = new Thread(funcionario1Loja1);
+        Thread threadFuncionario2Loja1 = new Thread(funcionario2Loja1);
+        Thread threadFuncionario1Loja2 = new Thread(funcionario1Loja2);
+        Thread threadFuncionario2Loja2 = new Thread(funcionario2Loja2);
+
         try {
             threadCliente1.join();
             threadCliente2.join();
@@ -80,9 +85,19 @@ public class Main {
             e.printStackTrace();
         }
 
-        loja1.pagarSalarios();
-        loja2.pagarSalarios();
 
-        
+        threadFuncionario1Loja1.start();
+        threadFuncionario2Loja1.start();
+        threadFuncionario1Loja2.start();
+        threadFuncionario2Loja2.start();
+
+        try {
+            threadFuncionario1Loja1.join();
+            threadFuncionario2Loja1.join();
+            threadFuncionario1Loja2.join();
+            threadFuncionario2Loja2.join();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
