@@ -40,6 +40,12 @@ public class Cliente extends Pessoa implements Runnable {
                     } else {
                         loja2.receberPagamento(valorCompra);
                     }
+                    try {
+                        Thread.sleep(1000); 
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        System.err.println("Thread interrupted while sleeping: " + e.getMessage());
+                    }
                 } else {
                     System.out.println(getNome() + " não possui saldo suficiente para realizar a compra de R$" + valorCompra);
                     break;

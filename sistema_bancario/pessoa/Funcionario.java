@@ -34,6 +34,12 @@ public class Funcionario extends Pessoa implements Runnable {
         lock.lock();
         try {
             receberSalario(salario);
+            try {
+                Thread.sleep(1000); 
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.err.println("Thread interrupted while sleeping: " + e.getMessage());
+            }
         } finally {
             lock.unlock();
         }
